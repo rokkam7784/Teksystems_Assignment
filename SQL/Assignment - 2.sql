@@ -140,13 +140,72 @@ order by attrition_rate desc ;
 
 
 -- 18
-alter table hr_employee add column SPYTRENDS varchar(20);
-select jobinvolvement,jobsatisfaction,
-       COUNT(*) AS total_count, 
-       (SUM(CASE WHEN attrition = 'Yes' THEN 1 ELSE 0 END) / COUNT(*)) * 100 AS attrition_rate
-from hr_employee
-group by jobinvolvement,jobsatisfaction
-order by attrition_rate;
+select 
+(
+select JobSatisfaction from (
+select sum(attrition01)/count(attrition01)*100 as attrition_rate,sum(attrition01) as attrition_count,JobSatisfaction from (
+select JobSatisfaction,
+case
+	when attrition = "Yes" then 1
+    else 0
+end as attrition01
+from hr_employee) as t
+group by JobSatisfaction
+order by attrition_rate desc limit 1) as JobSatisfactionTbl
+) as JobSatisfaction,
+
+(
+select maritalstatus from (
+select sum(attrition01)/count(attrition01)*100 as attrition_rate,sum(attrition01) as attrition_count, maritalstatus from (
+select maritalstatus ,
+case
+	when attrition = "Yes" then 1
+    else 0
+end as attrition01
+from hr_employee) as t
+group by maritalstatus 
+order by attrition_rate desc limit 1) as maritalstatusriTbl
+) as maritalstatus,
+
+(
+select businesstravel from (
+select sum(attrition01)/count(attrition01)*100 as attrition_rate,sum(attrition01) as attrition_count, businesstravel from (
+select businesstravel,
+case
+	when attrition = "Yes" then 1
+    else 0
+end as attrition01
+from hr_employee) as t
+group by businesstravel
+order by attrition_rate desc limit 1) as businesstravelTbl
+) as businesstravel,
+
+(
+select joblevel from (
+select sum(attrition01)/count(attrition01)*100 as attrition_rate,sum(attrition01) as attrition_count, joblevel from (
+select joblevel ,
+case
+	when attrition = "Yes" then 1
+    else 0
+end as attrition01
+from hr_employee) as t
+group by joblevel 
+order by attrition_rate desc limit 1) as joblevelTbl
+) as joblevel,
+
+(
+select education from (
+select sum(attrition01)/count(attrition01)*100 as attrition_rate,sum(attrition01) as attrition_count, education from (
+select education ,
+case
+	when attrition = "Yes" then 1
+    else 0
+end as attrition01
+from hr_employee) as t
+group by education 
+order by attrition_rate desc limit 1) as educationTbl
+) as education from hr_employee limit 1;
+
 
 
 -- 19
